@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Polttoainelaskuri',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -20,9 +20,9 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.red,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Polttoaineenkulutuslaskuri'),
     );
   }
 }
@@ -45,19 +45,13 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+enum CarType { A, B, C }
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+class _MyHomePageState extends State<MyHomePage> {
+  double _distanceValue = 10;
+  double _speed1Value = 50;
+  double _speed2Value = 80;
+  CarType? _selectedCar = CarType.A;
 
   @override
   Widget build(BuildContext context) {
@@ -74,40 +68,99 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+            RadioListTile<CarType>(
+              title: const Text('Auto A'),
+              value: CarType.A,
+              groupValue: _selectedCar,
+              onChanged: (CarType? c) {
+                setState(() {
+                  _selectedCar = c;
+                });
+              },
+            ),
+            RadioListTile<CarType>(
+              title: const Text('Auto B'),
+              value: CarType.B,
+              groupValue: _selectedCar,
+              onChanged: (CarType? c) {
+                setState(() {
+                  _selectedCar = c;
+                });
+              },
+            ),
+            RadioListTile<CarType>(
+              title: const Text('Auto C'),
+              value: CarType.C,
+              groupValue: _selectedCar,
+              onChanged: (CarType? c) {
+                setState(() {
+                  _selectedCar = c;
+                });
+              },
             ),
             Text(
-              '$_counter',
+              'Matka (km):',
+            ),
+            Text(
+              '$_distanceValue',
               style: Theme.of(context).textTheme.headline4,
             ),
+            Slider(
+              onChanged: (double value) {
+                setState(() {
+                  _distanceValue = value;
+                });
+              },
+              min: 10,
+              max: 1000,
+              divisions: 99,
+              label: "Matka (km)",
+              value: _distanceValue,
+            ),
+            Text(
+              'Nopeus 1 (km/h):',
+            ),
+            Text(
+              '$_speed1Value',
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            Slider(
+              onChanged: (double value) {
+                setState(() {
+                  _speed1Value = value;
+                });
+              },
+              min: 50,
+              max: 120,
+              divisions: 7,
+              label: "Nopeus 1 (km/h)",
+              value: _speed1Value,
+            ),
+            Text(
+              'Nopeus 2 (km/h):',
+            ),
+            Text(
+              '$_speed2Value',
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            Slider(
+              onChanged: (double value) {
+                setState(() {
+                  _speed2Value = value;
+                });
+              },
+              min: 50,
+              max: 120,
+              divisions: 7,
+              label: "Nopeus 2 (km/h)",
+              value: _speed2Value,
+            )
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

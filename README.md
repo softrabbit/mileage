@@ -1,16 +1,20 @@
 # mileage
 
-A new Flutter project.
+Polttoaineenkulutuslaskuri.
 
-## Getting Started
+## Teknologiat
+Flutter/Dart, Windows-pohjalla kehitetty.
 
-This project is a starting point for a Flutter application.
+## Pystytys ja käynnistys
+Olettaen että flutter-ympäristö on asennettu ja toimii, ratkaisua voi
+kokeilla koodin huipulta käskyllä `flutter run -d [chrome|edge]`, jolloin 
+laskin käynnistetään selaimeen. 
 
-A few resources to get you started if this is your first Flutter project:
+Koodin voi myös kääntää käskemällä koodin huipulta `flutter build web`,
+jolloin kansioon build/web kääntyy itsenäinen web-versio, jonka voi 
+julkaista www-serverillä.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Muutaman lauseen kuvaus tekemästäsi ratkaisusta
+Tämä on ensimmäinen kosketukseni Flutteriin, eli ratkaisut ovat
+enimmäkseen tuurilla osuneita ja suoraan oletus-sovelluksen koodia
+muokkaamalla tehtyjä.
