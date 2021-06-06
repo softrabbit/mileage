@@ -58,7 +58,9 @@ int getTravelTime(num distance, num speed) {
 String PrettyPrintMinutes(int t) {
   int hours = (t / 60).floor();
   int minutes = t - hours * 60;
-  return (t / 60).floor().toString() + "h " + minutes.toString() + "min";
+  return (hours > 0 ? hours.toString() + " h " : "") +
+      minutes.toString() +
+      " min";
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -156,7 +158,12 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: EdgeInsets.only(bottom: 25.0),
               child: Text('Kulutus nopeudella $_speed1Value km/h = ' +
                   getMileage(_selectedCar, _speed1Value).toStringAsFixed(1) +
-                  " l / 100 km, matka-aika " +
+                  " l / 100 km, yht. " +
+                  (getMileage(_selectedCar, _speed1Value) *
+                          _distanceValue /
+                          100)
+                      .toStringAsFixed(1) +
+                  " litraa, matka-aika " +
                   PrettyPrintMinutes(
                       getTravelTime(_distanceValue, _speed1Value))),
             ),
@@ -180,7 +187,12 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: EdgeInsets.only(bottom: 25.0),
               child: Text('Kulutus nopeudella $_speed2Value km/h = ' +
                   getMileage(_selectedCar, _speed2Value).toStringAsFixed(1) +
-                  " l / 100 km, matka-aika " +
+                  " l / 100 km, yht. " +
+                  (getMileage(_selectedCar, _speed2Value) *
+                          _distanceValue /
+                          100)
+                      .toStringAsFixed(1) +
+                  " litraa, matka-aika " +
                   PrettyPrintMinutes(
                       getTravelTime(_distanceValue, _speed2Value))),
             ),
@@ -195,7 +207,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     .headline5 // .merge(makeBold?) but I can't figure this out ATM
                 ),
             Text(
-                'Polttoainesäästö hitaammalla nopeudella: ' +
+                'Polttoainesäästö pienemmällä nopeudella: ' +
                     ((getMileage(_selectedCar, _speed1Value) -
                                     getMileage(_selectedCar, _speed2Value))
                                 .abs() *
