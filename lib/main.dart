@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 void main() {
   runApp(MyApp());
@@ -11,15 +12,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Polttoainelaskuri',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.red,
       ),
       home: MyHomePage(title: 'Polttoaineenkulutuslaskuri'),
@@ -46,12 +38,37 @@ class MyHomePage extends StatefulWidget {
 }
 
 enum CarType { A, B, C }
+// Gasoline in liters per 100 km at 1 km/h
+var litersper100 = {
+  CarType.A: 3,
+  CarType.B: 3.5,
+  CarType.C: 4,
+};
+num getMileage(CarType? c, double speed) {
+  return litersper100[c]! * pow(1.009, speed - 1);
+}
+
+// Return travel time in minutes. Distance in km and speed in km/h
+int getTravelTime(num distance, num speed) {
+  return ((distance / speed) * 60).floor();
+}
+
+// Probably reinventing the wheel but it could maybe be
+// un-reinvented later
+String PrettyPrintMinutes(int t) {
+  int hours = (t / 60).floor();
+  int minutes = t - hours * 60;
+  return (t / 60).floor().toString() + "h " + minutes.toString() + "min";
+}
 
 class _MyHomePageState extends State<MyHomePage> {
-  double _distanceValue = 10;
+  // Initial values for inputs
+  double _distanceValue = 100;
   double _speed1Value = 50;
   double _speed2Value = 80;
+
   CarType? _selectedCar = CarType.A;
+  final TextStyle makeBold = TextStyle(fontWeight: FontWeight.bold);
 
   @override
   Widget build(BuildContext context) {
@@ -63,13 +80,15 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          // This RadioList thing looks pretty ugly, but it looks
+          // like the most obvious ways to make it pretty are broken
+          // or too complex. (e.g. they won't work in a Row)
+          // Must revisit this later.
           children: <Widget>[
             RadioListTile<CarType>(
               title: const Text('Auto A'),
@@ -102,10 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             Text(
-              'Matka (km):',
-            ),
-            Text(
-              '$_distanceValue',
+              'Matka: $_distanceValue km',
               style: Theme.of(context).textTheme.headline4,
             ),
             Slider(
@@ -121,10 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
               value: _distanceValue,
             ),
             Text(
-              'Nopeus 1 (km/h):',
-            ),
-            Text(
-              '$_speed1Value',
+              'Nopeus 1: $_speed1Value km/h',
               style: Theme.of(context).textTheme.headline4,
             ),
             Slider(
@@ -139,11 +152,16 @@ class _MyHomePageState extends State<MyHomePage> {
               label: "Nopeus 1 (km/h)",
               value: _speed1Value,
             ),
-            Text(
-              'Nopeus 2 (km/h):',
+            Padding(
+              padding: EdgeInsets.only(bottom: 25.0),
+              child: Text('Kulutus nopeudella $_speed1Value km/h = ' +
+                  getMileage(_selectedCar, _speed1Value).toStringAsFixed(1) +
+                  " l / 100 km, matka-aika " +
+                  PrettyPrintMinutes(
+                      getTravelTime(_distanceValue, _speed1Value))),
             ),
             Text(
-              '$_speed2Value',
+              'Nopeus 2: $_speed2Value km/h',
               style: Theme.of(context).textTheme.headline4,
             ),
             Slider(
@@ -157,7 +175,37 @@ class _MyHomePageState extends State<MyHomePage> {
               divisions: 7,
               label: "Nopeus 2 (km/h)",
               value: _speed2Value,
-            )
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 25.0),
+              child: Text('Kulutus nopeudella $_speed2Value km/h = ' +
+                  getMileage(_selectedCar, _speed2Value).toStringAsFixed(1) +
+                  " l / 100 km, matka-aika " +
+                  PrettyPrintMinutes(
+                      getTravelTime(_distanceValue, _speed2Value))),
+            ),
+            Text(
+                'Aikasäästö suuremmalla nopeudella: ' +
+                    PrettyPrintMinutes(
+                        (getTravelTime(_distanceValue, _speed1Value) -
+                                getTravelTime(_distanceValue, _speed2Value))
+                            .abs()),
+                style: Theme.of(context)
+                    .textTheme
+                    .headline5 // .merge(makeBold?) but I can't figure this out ATM
+                ),
+            Text(
+                'Polttoainesäästö hitaammalla nopeudella: ' +
+                    ((getMileage(_selectedCar, _speed1Value) -
+                                    getMileage(_selectedCar, _speed2Value))
+                                .abs() *
+                            _distanceValue /
+                            100)
+                        .toStringAsFixed(1) +
+                    " litraa",
+                style:
+                    Theme.of(context).textTheme.headline5 // .merge(makeBold?)
+                ),
           ],
         ),
       ),
